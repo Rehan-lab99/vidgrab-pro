@@ -1,89 +1,58 @@
-// Enhanced download functionality
-async function downloadVideo(quality) {
-    if (!this.currentVideoUrl) {
-        this.showNotification('❌ Please enter a YouTube URL first', 'error');
-        return;
-    }
+console.log('✅ Script loaded successfully!');
 
-    try {
-        this.showNotification(`⏳ Starting ${quality} download...`, 'info');
-        this.showProgressBar();
-
-        // Try main download API
-        const downloadUrl = `/api/download?url=${encodeURIComponent(this.currentVideoUrl)}&quality=${quality}`;
-        
-        // Test if API is responsive
-        const testResponse = await fetch(`/api/health`);
-        if (!testResponse.ok) {
-            throw new Error('API server not responding');
-        }
-
-        // Create download link
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.target = '_blank';
-        link.download = 'video.mp4';
-        
-        // Add to page and trigger click
-        document.body.appendChild(link);
-        link.click();
-        
-        // Clean up
-        setTimeout(() => {
-            document.body.removeChild(link);
-            this.hideProgressBar();
-        }, 1000);
-
-        // Update statistics
-        await this.updateStats('download');
-        this.showNotification(`✅ Download started successfully!`, 'success');
-
-    } catch (error) {
-        console.error('Download error:', error);
-        
-        // Fallback to quick download
-        try {
-            this.showNotification('🔄 Trying alternative method...', 'info');
-            await this.quickDownload();
-        } catch (fallbackError) {
-            this.showNotification(`❌ Download failed: ${error.message}`, 'error');
-            this.showAlternativeMethods();
-        } finally {
-            this.hideProgressBar();
-        }
-    }
-}
-
-// Quick download method
-async function quickDownload() {
-    const quickUrl = `/api/quick-download?url=${encodeURIComponent(this.currentVideoUrl)}`;
+function fetchVideoInfo() {
+    const url = document.getElementById('videoUrl').value;
+    const button = document.querySelector('.download-btn');
     
-    const link = document.createElement('a');
-    link.href = quickUrl;
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    console.log('Fetching info for:', url);
     
-    this.showNotification('✅ Quick download started!', 'success');
+    // Show loading
+    button.innerHTML = '⏳ Loading...';
+    button.disabled = true;
+    
+    // Simulate API call
+    setTimeout(() => {
+        // Always show demo data
+        document.getElementById('thumbnailImg').src = 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400&h=250&fit=crop';
+        document.getElementById('videoTitle').textContent = 'YouTube Video - ' + (url ? 'Loaded Successfully' : 'Demo');
+        document.getElementById('videoDuration').textContent = '8:45';
+        document.getElementById('videoViews').textContent = '2.1M views';
+        
+        // Show video section
+        document.getElementById('videoInfo').style.display = 'block';
+        
+        // Reset button
+        button.innerHTML = '⬇️ Grab Video';
+        button.disabled = false;
+        
+        alert('✅ Video info loaded successfully!');
+        
+    }, 1500);
 }
 
-// Audio download method  
-async function downloadAudio() {
-    try {
-        const audioUrl = `/api/download-audio?url=${encodeURIComponent(this.currentVideoUrl)}`;
-        
-        const link = document.createElement('a');
-        link.href = audioUrl;
-        link.target = '_blank';
-        link.download = 'audio.mp3';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        this.showNotification('🎵 Audio download started!', 'success');
-        await this.updateStats('download');
-    } catch (error) {
-        this.showNotification('❌ Audio download failed', 'error');
-    }
+function downloadVideo(quality) {
+    alert(`🎬 Download would start in ${quality} quality!\n\nNote: This is a demo. Actual download requires backend setup.`);
+    
+    // Simulate download
+    console.log('Download requested:', quality);
 }
+
+function openAdminPanel() {
+    document.getElementById('adminModal').style.display = 'block';
+}
+
+function closeAdminPanel() {
+    document.getElementById('adminModal').style.display = 'none';
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Website fully loaded!');
+    
+    // Enter key support
+    document.getElementById('videoUrl').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            fetchVideoInfo();
+        }
+    });
+});
