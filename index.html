@@ -3,55 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VidGrab Pro - YouTube Downloader</title>
+    <title>ProTube Downloader - YouTube Video Download</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="nav-logo">
-                <i class="fas fa-play-circle"></i>
-                VidGrab Pro
+            <div class="nav-brand">
+                <i class="fab fa-youtube"></i>
+                <span>ProTube</span>
+                <span class="brand-highlight">Downloader</span>
+            </div>
+            <div class="nav-stats">
+                <div class="stat">
+                    <i class="fas fa-download"></i>
+                    <span>10K+ Downloads</span>
+                </div>
             </div>
         </div>
     </nav>
 
+    <!-- Hero Section -->
     <section class="hero">
-        <div class="hero-content">
-            <h1>Download YouTube Videos</h1>
-            <p>Fast, free, and easy to use</p>
-            
-            <div class="download-box">
-                <div class="input-group">
-                    <input type="text" id="videoUrl" placeholder="Paste YouTube URL here...">
-                    <button class="download-btn" onclick="fetchVideoInfo()">
-                        <i class="fas fa-download"></i> Grab Video
-                    </button>
-                </div>
-            </div>
+        <div class="hero-background">
+            <div class="gradient-1"></div>
+            <div class="gradient-2"></div>
         </div>
-    </section>
-
-    <section id="videoInfo" class="video-info-section" style="display: none;">
-        <div class="container">
-            <h2>Video Ready for Download</h2>
-            <div class="video-card">
-                <div class="video-preview">
-                    <img id="thumbnailImg" src="" alt="Video Thumbnail" class="thumbnail">
+        
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-bolt"></i>
+                    FAST & FREE
                 </div>
-                <div class="video-details">
-                    <h3 id="videoTitle">Video Title</h3>
-                    <div class="video-meta">
-                        <span><i class="fas fa-clock"></i> <span id="videoDuration">00:00</span></span>
-                        <span><i class="fas fa-eye"></i> <span id="videoViews">0 views</span></span>
+                
+                <h1 class="hero-title">
+                    Download <span class="text-gradient">YouTube Videos</span> 
+                    in HD Quality
+                </h1>
+                
+                <p class="hero-description">
+                    Download any YouTube video in 1080p, 720p, 480p quality. 
+                    No registration required. Completely free.
+                </p>
+
+                <!-- Download Box -->
+                <div class="download-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-download"></i> Download Video</h3>
+                        <div class="success-rate">
+                            <i class="fas fa-check-circle"></i>
+                            99% Success Rate
+                        </div>
                     </div>
-                    <div class="quality-options">
-                        <h4>Select Quality:</h4>
-                        <div class="quality-buttons">
-                            <button class="quality-btn" onclick="downloadVideo('360p')">360p</button>
-                            <button class="quality-btn" onclick="downloadVideo('720p')">720p HD</button>
-                            <button class="quality-btn" onclick="downloadVideo('1080p')">1080p FHD</button>
+                    
+                    <div class="input-container">
+                        <div class="input-group">
+                            <i class="fab fa-youtube input-icon"></i>
+                            <input type="text" id="videoUrl" 
+                                   placeholder="Paste YouTube video link here... Example: https://www.youtube.com/watch?v=..." 
+                                   class="url-input">
+                            <button class="download-btn" onclick="fetchVideoInfo()" id="mainBtn">
+                                <i class="fas fa-play"></i> Get Video
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="features-grid">
+                        <div class="feature">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Safe & Secure</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-bolt"></i>
+                            <span>Fast Download</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-infinity"></i>
+                            <span>Unlimited</span>
                         </div>
                     </div>
                 </div>
@@ -59,9 +91,185 @@
         </div>
     </section>
 
+    <!-- Video Info Section -->
+    <section id="videoInfo" class="video-section" style="display: none;">
+        <div class="container">
+            <div class="section-header">
+                <h2>Video Ready to Download</h2>
+                <p>Select your preferred quality and start downloading</p>
+            </div>
+            
+            <div class="video-player">
+                <div class="video-left">
+                    <div class="thumbnail-container">
+                        <img id="thumbnailImg" src="" alt="Video Thumbnail" class="video-thumbnail">
+                        <div class="play-overlay">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        <div class="duration-badge" id="videoDuration">0:00</div>
+                    </div>
+                </div>
+                
+                <div class="video-right">
+                    <h3 id="videoTitle" class="video-title">Video Title</h3>
+                    
+                    <div class="video-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-eye"></i>
+                            <span id="videoViews">0 views</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-user"></i>
+                            <span id="videoAuthor">Channel</span>
+                        </div>
+                    </div>
+
+                    <!-- Quality Selection -->
+                    <div class="quality-section">
+                        <h4><i class="fas fa-layer-group"></i> Select Video Quality</h4>
+                        <div class="quality-grid">
+                            <div class="quality-card" onclick="startDownload('1080p')">
+                                <div class="quality-header">
+                                    <i class="fas fa-hd"></i>
+                                    <span class="quality-name">1080p FHD</span>
+                                </div>
+                                <div class="quality-info">
+                                    <span class="quality-desc">Full HD - Best Quality</span>
+                                    <span class="file-size">~150MB</span>
+                                </div>
+                                <div class="download-arrow">
+                                    <i class="fas fa-arrow-down"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="quality-card" onclick="startDownload('720p')">
+                                <div class="quality-header">
+                                    <i class="fas fa-tv"></i>
+                                    <span class="quality-name">720p HD</span>
+                                </div>
+                                <div class="quality-info">
+                                    <span class="quality-desc">High Definition</span>
+                                    <span class="file-size">~80MB</span>
+                                </div>
+                                <div class="download-arrow">
+                                    <i class="fas fa-arrow-down"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="quality-card" onclick="startDownload('480p')">
+                                <div class="quality-header">
+                                    <i class="fas fa-tablet"></i>
+                                    <span class="quality-name">480p SD</span>
+                                </div>
+                                <div class="quality-info">
+                                    <span class="quality-desc">Standard Definition</span>
+                                    <span class="file-size">~40MB</span>
+                                </div>
+                                <div class="download-arrow">
+                                    <i class="fas fa-arrow-down"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="quality-card" onclick="startDownload('360p')">
+                                <div class="quality-header">
+                                    <i class="fas fa-mobile"></i>
+                                    <span class="quality-name">360p</span>
+                                </div>
+                                <div class="quality-info">
+                                    <span class="quality-desc">Mobile Friendly</span>
+                                    <span class="file-size">~20MB</span>
+                                </div>
+                                <div class="download-arrow">
+                                    <i class="fas fa-arrow-down"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="action-buttons">
+                        <button class="btn-secondary" onclick="fetchVideoInfo()">
+                            <i class="fas fa-redo"></i> Reload Info
+                        </button>
+                        <button class="btn-primary" onclick="startDownload('720p')">
+                            <i class="fas fa-rocket"></i> Download HD
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why Choose ProTube Downloader?</h2>
+                <p>The most advanced YouTube video downloader</p>
+            </div>
+            
+            <div class="features-grid-main">
+                <div class="feature-card-main">
+                    <div class="feature-icon-main">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <h3>Instant Download</h3>
+                    <p>Download videos instantly without any delays or waiting time</p>
+                </div>
+                
+                <div class="feature-card-main">
+                    <div class="feature-icon-main">
+                        <i class="fas fa-high-definition"></i>
+                    </div>
+                    <h3>Multiple Qualities</h3>
+                    <p>Choose from 360p to 1080p quality based on your needs</p>
+                </div>
+                
+                <div class="feature-card-main">
+                    <div class="feature-icon-main">
+                        <i class="fas fa-shield-virus"></i>
+                    </div>
+                    <h3>100% Safe</h3>
+                    <p>No viruses, no malware. Your safety is our priority</p>
+                </div>
+                
+                <div class="feature-card-main">
+                    <div class="feature-icon-main">
+                        <i class="fas fa-infinity"></i>
+                    </div>
+                    <h3>Unlimited Downloads</h3>
+                    <p>Download as many videos as you want without any restrictions</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2024 VidGrab Pro. All rights reserved.</p>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fab fa-youtube"></i>
+                        ProTube Downloader
+                    </div>
+                    <p>The most reliable YouTube video downloader</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <a href="#">Home</a>
+                    <a href="#">About</a>
+                    <a href="#">Contact</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 ProTube Downloader. All rights reserved.</p>
+            </div>
+        </div>
     </footer>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
 
     <script src="script.js"></script>
 </body>
