@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidGrab Pro - YouTube Video Downloader</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-play-circle"></i>
+                <span>VidGrab</span>
+                <span class="logo-pro">Pro</span>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="nav-link active"><i class="fas fa-home"></i> Home</a>
+                <a href="#" class="nav-link"><i class="fas fa-info-circle"></i> About</a>
+                <a href="#" class="nav-link"><i class="fas fa-envelope"></i> Contact</a>
+                <a href="#" class="nav-link admin-btn" onclick="openAdminPanel()">
+                    <i class="fas fa-crown"></i> Admin
+                </a>
+            </div>
+            <div class="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    Download <span class="highlight">YouTube Videos</span> 
+                    <br>In One Click
+                </h1>
+                <p class="hero-subtitle">4K, 1080p, 720p - All formats supported. Fast, free, and unlimited downloads</p>
+                
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-number" id="totalDownloads">10K+</span>
+                        <span class="stat-label">Downloads</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">99%</span>
+                        <span class="stat-label">Success Rate</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Available</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="download-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-download"></i> Download Video</h3>
+                    <div class="loader" id="mainLoader" style="display: none;">
+                        <div class="loader-spinner"></div>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-icon">
+                        <i class="fab fa-youtube"></i>
+                    </div>
+                    <input type="text" id="videoUrl" placeholder="Paste YouTube URL here...">
+                    <button class="download-btn" onclick="fetchVideoInfo()" id="mainDownloadBtn">
+                        <i class="fas fa-bolt"></i> Grab Video
+                    </button>
+                </div>
+
+                <div class="quick-tips">
+                    <p><i class="fas fa-lightbulb"></i> Tip: Copy YouTube URL from address bar</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="scroll-indicator">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- Video Info Section -->
+    <section id="videoInfo" class="video-info-section" style="display: none;">
+        <div class="container">
+            <div class="section-header">
+                <h2>Video Ready to Download</h2>
+                <p>Select your preferred quality and format</p>
+            </div>
+            
+            <div class="video-card">
+                <div class="video-preview">
+                    <img id="thumbnailImg" src="" alt="Video Thumbnail" class="thumbnail">
+                    <div class="play-overlay">
+                        <i class="fas fa-play"></i>
+                    </div>
+                    <div class="quality-badge" id="qualityBadge">HD</div>
+                </div>
+                
+                <div class="video-details">
+                    <h3 id="videoTitle" class="video-title">Video Title</h3>
+                    
+                    <div class="video-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span id="videoDuration">00:00</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-eye"></i>
+                            <span id="videoViews">0 views</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-user"></i>
+                            <span id="videoAuthor">Channel</span>
+                        </div>
+                    </div>
+
+                    <div class="progress-section" id="progressSection" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <span class="progress-text" id="progressText">Preparing download...</span>
+                    </div>
+
+                    <div class="quality-options">
+                        <h4><i class="fas fa-layer-group"></i> Available Qualities</h4>
+                        <div class="quality-grid">
+                            <div class="quality-option" onclick="downloadVideo('144p')">
+                                <div class="quality-icon">
+                                    <i class="fas fa-mobile"></i>
+                                </div>
+                                <div class="quality-info">
+                                    <span class="quality-name">144p</span>
+                                    <span class="quality-desc">Small Size</span>
+                                </div>
+                                <div class="quality-badge-small">Free</div>
+                            </div>
+                            
+                            <div class="quality-option" onclick="downloadVideo('360p')">
+                                <div class="quality-icon">
+                                    <i class="fas fa-tablet"></i>
+                                </div>
+                                <div class="quality-info">
+                                    <span class="quality-name">360p</span>
+                                    <span class="quality-desc">Good Quality</span>
+                                </div>
+                                <div class="quality-badge-small">Free</div>
+                            </div>
+                            
+                            <div class="quality-option premium" onclick="downloadVideo('720p')">
+                                <div class="quality-icon">
+                                    <i class="fas fa-laptop"></i>
+                                </div>
+                                <div class="quality-info">
+                                    <span class="quality-name">720p HD</span>
+                                    <span class="quality-desc">High Definition</span>
+                                </div>
+                                <div class="quality-badge-small pro">PRO</div>
+                            </div>
+                            
+                            <div class="quality-option premium" onclick="downloadVideo('1080p')">
+                                <div class="quality-icon">
+                                    <i class="fas fa-desktop"></i>
+                                </div>
+                                <div class="quality-info">
+                                    <span class="quality-name">1080p FHD</span>
+                                    <span class="quality-desc">Full HD</span>
+                                </div>
+                                <div class="quality-badge-small pro">PRO</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn-secondary" onclick="showVideoInfo()">
+                            <i class="fas fa-info-circle"></i> Video Info
+                        </button>
+                        <button class="btn-primary" onclick="downloadBestQuality()">
+                            <i class="fas fa-rocket"></i> Download Best Quality
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why Choose VidGrab Pro?</h2>
+                <p>Experience the best YouTube video downloading platform</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Lightning Fast</h3>
+                    <p>Download videos at maximum speed with our optimized servers</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-high-definition"></i>
+                    </div>
+                    <h3>Multiple Qualities</h3>
+                    <p>From 144p to 1080p - choose the perfect quality for your needs</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Safe & Secure</h3>
+                    <p>100% virus-free downloads with encrypted connections</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-infinity"></i>
+                    </div>
+                    <h3>Unlimited Downloads</h3>
+                    <p>No restrictions on the number of videos you can download</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile Friendly</h3>
+                    <p>Works perfectly on all devices - desktop, tablet, and mobile</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cloud-download-alt"></i>
+                    </div>
+                    <h3>Cloud Storage</h3>
+                    <p>Direct downloads without any cloud storage requirements</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>Download videos in 3 simple steps</p>
+            </div>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <h3>Copy URL</h3>
+                    <p>Copy the YouTube video URL from your browser</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">
+                        <i class="fas fa-paste"></i>
+                    </div>
+                    <h3>Paste Link</h3>
+                    <p>Paste the URL in our downloader and click Grab Video</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <h3>Download</h3>
+                    <p>Choose quality and download your video instantly</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Panel Modal -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content admin-modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-crown"></i> Admin Dashboard</h2>
+                <span class="close" onclick="closeAdminPanel()">&times;</span>
+            </div>
+            
+            <div class="modal-body">
+                <div class="admin-tabs">
+                    <button class="tab-btn active" onclick="openTab('stats')">
+                        <i class="fas fa-chart-bar"></i> Statistics
+                    </button>
+                    <button class="tab-btn" onclick="openTab('downloads')">
+                        <i class="fas fa-download"></i> Downloads
+                    </button>
+                    <button class="tab-btn" onclick="openTab('settings')">
+                        <i class="fas fa-cog"></i> Settings
+                    </button>
+                </div>
+
+                <div id="stats" class="tab-content active">
+                    <div class="stats-grid">
+                        <div class="stat-card admin">
+                            <div class="stat-icon">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-number" id="adminTotalDownloads">0</div>
+                                <div class="stat-label">Total Downloads</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card admin">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-number" id="adminTodayDownloads">0</div>
+                                <div class="stat-label">Today Downloads</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card admin">
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-number" id="adminSuccessRate">0%</div>
+                                <div class="stat-label">Success Rate</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="downloads" class="tab-content">
+                    <h3>Recent Downloads</h3>
+                    <div class="downloads-list" id="downloadsList">
+                        <!-- Downloads will be loaded here -->
+                    </div>
+                </div>
+
+                <div id="settings" class="tab-content">
+                    <h3>Platform Settings</h3>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label>Maximum File Size (MB)</label>
+                            <input type="number" id="maxFileSize" value="500" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Allowed Qualities</label>
+                            <div class="quality-checkboxes">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="quality" value="144p" checked>
+                                    <span class="checkmark"></span>
+                                    144p
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="quality" value="360p" checked>
+                                    <span class="checkmark"></span>
+                                    360p
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="quality" value="720p" checked>
+                                    <span class="checkmark"></span>
+                                    720p HD
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="quality" value="1080p" checked>
+                                    <span class="checkmark"></span>
+                                    1080p FHD
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button class="save-btn" onclick="saveSettings()">
+                            <i class="fas fa-save"></i> Save Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-play-circle"></i>
+                        VidGrab<span class="logo-pro">Pro</span>
+                    </div>
+                    <p>The ultimate YouTube video downloader. Fast, free, and reliable.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <a href="#">Home</a>
+                    <a href="#">About</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Privacy Policy</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <a href="#">Help Center</a>
+                    <a href="#">FAQ</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 VidGrab Pro. All rights reserved. | Made with <i class="fas fa-heart"></i> for YouTube users</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Notification System -->
+    <div id="notification" class="notification"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

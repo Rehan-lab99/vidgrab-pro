@@ -1,0 +1,21 @@
+{
+  "name": "vidgrab-pro",
+  "version": "1.0.0",
+  "description": "Professional YouTube Video Downloader",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "echo 'Build completed'"
+  },
+  "dependencies": {
+    "express": "^4.18.0",
+    "cors": "^2.8.5",
+    "ytdl-core": "^4.11.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["youtube", "downloader", "video"],
+  "author": "Your Name",
+  "license": "MIT"
+}
