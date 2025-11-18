@@ -1,21 +1,11 @@
 {
-  "name": "vidgrab-pro",
+  "name": "vidgrab-simple",
   "version": "1.0.0",
-  "description": "YouTube Video Downloader",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.0",
-    "cors": "^2.8.5",
-    "ytdl-core": "^4.11.0"
-  },
-  "engines": {
-    "node": ">=16.0.0"
-  },
-  "keywords": ["youtube", "downloader"],
-  "author": "Your Name",
-  "license": "MIT"
+    "express": "^4.18.0"
+  }
 }
