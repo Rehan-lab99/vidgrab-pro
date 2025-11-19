@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - YouTube Downloader</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f0f0f;
+            color: white;
+            line-height: 1.6;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ff0000;
+            margin-bottom: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #252525;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            background: #ff0000;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: #1a1a1a;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+
+        .card h3 {
+            margin-bottom: 20px;
+            color: #ff0000;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #252525;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff0000;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #aaa;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background: #252525;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: white;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            background: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            background: #cc0000;
+        }
+
+        .btn-secondary {
+            background: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #444;
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: 100px auto;
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ff0000;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .alert.success {
+            background: #00c853;
+            color: white;
+        }
+
+        .alert.error {
+            background: #ff4444;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="loginPage" class="login-form">
+        <h2>Admin Login</h2>
+        <div id="loginAlert" class="alert hidden"></div>
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="username" class="form-control" placeholder="Enter username">
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password" class="form-control" placeholder="Enter password">
+        </div>
+        <button class="btn" onclick="login()" style="width: 100%">Login</button>
+    </div>
+
+    <div id="adminPanel" class="admin-container hidden">
+        <div class="header">
+            <div class="logo">YouTube Downloader - Admin Panel</div>
+            <button class="btn btn-secondary" onclick="logout()" style="float: right">Logout</button>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="openTab('dashboard')">Dashboard</button>
+            <button class="tab" onclick="openTab('settings')">Settings</button>
+            <button class="tab" onclick="openTab('blocking')">Block Videos</button>
+        </div>
+
+        <div id="dashboard" class="tab-content active">
+            <div class="card">
+                <h3>Download Statistics</h3>
+                <div class="stats-grid" id="statsGrid">
+                    <!-- Stats will be loaded here -->
+                </div>
+                <button class="btn btn-secondary" onclick="resetStats()">Reset Statistics</button>
+            </div>
+        </div>
+
+        <div id="settings" class="tab-content">
+            <div class="card">
+                <h3>Website Settings</h3>
+                <div class="form-group">
+                    <label>Max File Size (MB)</label>
+                    <input type="number" id="maxFileSize" class="form-control" min="50" max="2000">
+                </div>
+                <div class="form-group">
+                    <label>Rate Limit (downloads per hour)</label>
+                    <input type="number" id="rateLimit" class="form-control" min="1" max="100">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="maintenanceMode"> Maintenance Mode
+                    </label>
+                </div>
+                <button class="btn" onclick="saveSettings()">Save Settings</button>
+            </div>
+        </div>
+
+        <div id="blocking" class="tab-content">
+            <div class="card">
+                <h3>Block Videos</h3>
+                <div class="form-group">
+                    <label>YouTube Video ID</label>
+                    <input type="text" id="videoId" class="form-control" placeholder="Enter video ID (e.g., dQw4w9WgXcQ)">
+                </div>
+                <button class="btn" onclick="blockVideo()">Block Video</button>
+                
+                <h4 style="margin-top: 20px;">Blocked Videos</h4>
+                <div id="blockedVideosList">
+                    <!-- Blocked videos will be listed here -->
+                </div>
+            </div>
+        </div>
+
+        <div id="alert" class="alert hidden"></div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
