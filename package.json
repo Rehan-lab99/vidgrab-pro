@@ -1,27 +1,13 @@
 {
-  "name": "real-youtube-downloader",
-  "version": "2.0.0",
-  "description": "Real Working YouTube Video Downloader",
+  "name": "youtube-downloader",
+  "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.18.0",
     "cors": "^2.8.5",
     "ytdl-core": "^4.11.0"
-  },
-  "engines": {
-    "node": ">=16.0.0"
-  },
-  "keywords": [
-    "youtube",
-    "downloader",
-    "video",
-    "download",
-    "mp4"
-  ],
-  "author": "Your Name",
-  "license": "MIT"
+  }
 }
