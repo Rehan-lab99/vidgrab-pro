@@ -1,6 +1,6 @@
 {
-  "name": "youtube-downloader",
-  "version": "1.0.0",
+  "name": "youtube-downloader-pro",
+  "version": "2.0.0",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
