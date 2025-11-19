@@ -1,7 +1,7 @@
-// ProTube Downloader - Professional YouTube Downloader
-console.log('🚀 ProTube Downloader Loaded!');
+// Real YouTube Downloader - Working Frontend
+console.log('🎯 Real YouTube Downloader Loaded!');
 
-class ProTubeDownloader {
+class RealYouTubeDownloader {
     constructor() {
         this.currentVideoUrl = '';
         this.currentVideoInfo = null;
@@ -10,19 +10,23 @@ class ProTubeDownloader {
 
     init() {
         this.bindEvents();
-        console.log('✅ ProTube Downloader Initialized');
+        this.testConnection();
     }
 
     bindEvents() {
-        // Enter key support
         document.getElementById('videoUrl').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.fetchVideoInfo();
         });
+    }
 
-        // Auto-focus on input
-        setTimeout(() => {
-            document.getElementById('videoUrl').focus();
-        }, 1000);
+    async testConnection() {
+        try {
+            const response = await fetch('/api/test');
+            const data = await response.json();
+            console.log('✅ Backend Connection:', data);
+        } catch (error) {
+            console.log('❌ Backend Connection Failed');
+        }
     }
 
     async fetchVideoInfo() {
@@ -30,42 +34,42 @@ class ProTubeDownloader {
         const button = document.getElementById('mainBtn');
 
         if (!videoUrl) {
-            this.showNotification('❌ Please enter a YouTube URL', 'error');
+            this.showNotification('❌ YouTube URL paste karein', 'error');
             return;
         }
 
         if (!this.isValidYouTubeUrl(videoUrl)) {
-            this.showNotification('❌ Please enter a valid YouTube URL', 'error');
+            this.showNotification('❌ Valid YouTube URL dalen', 'error');
             return;
         }
 
         this.currentVideoUrl = videoUrl;
 
-        // Show loading state
-        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+        // Show loading
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Video Load Ho Raha Hai...';
         button.disabled = true;
 
         try {
-            this.showNotification('🔍 Fetching video information...', 'info');
+            this.showNotification('🔍 Video information fetch kar raha hun...', 'info');
 
             const response = await fetch(`/api/video-info?url=${encodeURIComponent(videoUrl)}`);
             
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to fetch video info');
+                throw new Error(errorData.error || 'Video load nahi hua');
             }
 
             const videoInfo = await response.json();
             this.currentVideoInfo = videoInfo;
             
             this.displayVideoInfo(videoInfo);
-            this.showNotification('✅ Video info loaded successfully!', 'success');
+            this.showNotification('✅ Video successfully load ho gaya!', 'success');
 
         } catch (error) {
             console.error('Error:', error);
             this.showNotification(`❌ ${error.message}`, 'error');
         } finally {
-            button.innerHTML = '<i class="fas fa-play"></i> Get Video';
+            button.innerHTML = '<i class="fas fa-download"></i> Video Download Karein';
             button.disabled = false;
         }
     }
@@ -77,127 +81,168 @@ class ProTubeDownloader {
         document.getElementById('thumbnailImg').src = videoInfo.thumbnail;
         document.getElementById('videoTitle').textContent = videoInfo.title;
         document.getElementById('videoDuration').textContent = videoInfo.duration;
-        document.getElementById('videoViews').textContent = videoInfo.views + ' views';
+        document.getElementById('videoViews').textContent = videoInfo.views;
         document.getElementById('videoAuthor').textContent = videoInfo.author;
 
-        // Show section with animation
+        // Show available formats
+        this.showAvailableQualities(videoInfo.formats);
+
+        // Show section
         videoSection.style.display = 'block';
-        setTimeout(() => {
-            videoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
+        videoSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    showAvailableQualities(formats) {
+        const qualityGrid = document.querySelector('.quality-grid');
+        if (!qualityGrid) return;
+
+        // Clear existing
+        qualityGrid.innerHTML = '';
+
+        // Get unique qualities
+        const uniqueQualities = [];
+        const seen = new Set();
+
+        formats.forEach(format => {
+            if (format.quality && !seen.has(format.quality)) {
+                seen.add(format.quality);
+                uniqueQualities.push(format);
+            }
+        });
+
+        // Sort by quality (highest first)
+        uniqueQualities.sort((a, b) => {
+            const qualityA = parseInt(a.quality) || 0;
+            const qualityB = parseInt(b.quality) || 0;
+            return qualityB - qualityA;
+        });
+
+        // Add quality cards
+        uniqueQualities.forEach(format => {
+            const qualityCard = this.createQualityCard(format.quality);
+            qualityGrid.appendChild(qualityCard);
+        });
+    }
+
+    createQualityCard(quality) {
+        const card = document.createElement('div');
+        card.className = 'quality-card';
+        card.onclick = () => this.startDownload(quality);
+        
+        card.innerHTML = `
+            <div class="quality-header">
+                <i class="fas fa-hd"></i>
+                <span class="quality-name">${quality}</span>
+            </div>
+            <div class="quality-info">
+                <span class="quality-desc">High Quality Video</span>
+                <span class="file-size">MP4 Format</span>
+            </div>
+            <div class="download-arrow">
+                <i class="fas fa-arrow-down"></i>
+            </div>
+        `;
+        
+        return card;
     }
 
     async startDownload(quality) {
         if (!this.currentVideoUrl) {
-            this.showNotification('❌ Please enter a YouTube URL first', 'error');
+            this.showNotification('❌ Pehle YouTube URL dalen', 'error');
             return;
         }
 
         try {
-            this.showNotification(`⏳ Starting ${quality} download...`, 'info');
+            this.showNotification(`⏳ ${quality} quality mein download start ho raha hai...`, 'info');
 
             // Create download link
             const downloadUrl = `/api/download?url=${encodeURIComponent(this.currentVideoUrl)}&quality=${quality}`;
             
-            // Test if download endpoint is accessible
-            const testResponse = await fetch(downloadUrl, { method: 'HEAD' });
-            
-            if (!testResponse.ok) {
-                throw new Error('Download server not responding');
-            }
-
-            // Create and trigger download
+            // Create hidden link
             const link = document.createElement('a');
             link.href = downloadUrl;
             link.target = '_blank';
             link.style.display = 'none';
             
-            // Generate filename
-            const filename = this.currentVideoInfo ? 
-                this.currentVideoInfo.title.replace(/[^\w\s]/gi, '_') + '.mp4' : 
-                'youtube_video.mp4';
+            // Set filename
+            if (this.currentVideoInfo) {
+                const filename = this.currentVideoInfo.title.replace(/[^\w\s]/gi, '_') + '.mp4';
+                link.download = filename;
+            }
             
-            link.download = filename;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
 
-            this.showNotification(`✅ Download started for ${quality}!`, 'success');
+            this.showNotification(`✅ Download shuru ho gaya! ${quality} quality`, 'success');
+
+            // Update stats
+            this.updateStats();
 
         } catch (error) {
             console.error('Download error:', error);
             this.showNotification(`❌ Download failed: ${error.message}`, 'error');
-            
-            // Fallback: open in new tab
-            const fallbackUrl = `/api/download?url=${encodeURIComponent(this.currentVideoUrl)}&quality=${quality}`;
-            window.open(fallbackUrl, '_blank');
+        }
+    }
+
+    async updateStats() {
+        try {
+            await fetch('/api/stats');
+        } catch (error) {
+            console.log('Stats update failed');
         }
     }
 
     isValidYouTubeUrl(url) {
-        const patterns = [
-            /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/,
-            /^(https?:\/\/)?(www\.)?(youtu\.be\/)([a-zA-Z09_-]{11})/,
-            /^(https?:\/\/)?(www\.)?(youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/
-        ];
-        
-        return patterns.some(pattern => pattern.test(url));
+        return url.includes('youtube.com/watch') || url.includes('youtu.be/');
     }
 
     showNotification(message, type = 'info') {
-        // Remove existing notification
-        const existingNotification = document.getElementById('notification');
-        if (existingNotification) {
-            existingNotification.remove();
+        // Simple alert for now - you can enhance this
+        if (type === 'error') {
+            alert('❌ ' + message);
+        } else if (type === 'success') {
+            alert('✅ ' + message);
+        } else {
+            alert('ℹ️ ' + message);
         }
+    }
 
-        // Create new notification
-        const notification = document.createElement('div');
-        notification.id = 'notification';
-        notification.className = `notification ${type}`;
-        notification.textContent = message;
+    // Quick download method
+    async quickDownload() {
+        if (!this.currentVideoUrl) return;
         
-        document.body.appendChild(notification);
+        const downloadUrl = `/api/quick-download?url=${encodeURIComponent(this.currentVideoUrl)}`;
+        window.open(downloadUrl, '_blank');
+        this.showNotification('🚀 Quick download shuru ho gaya!', 'success');
+    }
 
-        // Auto hide after 5 seconds
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.style.transform = 'translateX(400px)';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.remove();
-                    }
-                }, 300);
-            }
-        }, 5000);
+    // Audio download
+    async downloadAudio() {
+        if (!this.currentVideoUrl) return;
+        
+        const downloadUrl = `/api/download-audio?url=${encodeURIComponent(this.currentVideoUrl)}`;
+        window.open(downloadUrl, '_blank');
+        this.showNotification('🎵 Audio download shuru ho gaya!', 'success');
     }
 }
 
-// Initialize the application
-const proTube = new ProTubeDownloader();
+// Initialize
+const realDownloader = new RealYouTubeDownloader();
 
-// Global functions for HTML onclick
+// Global functions
 function fetchVideoInfo() {
-    proTube.fetchVideoInfo();
+    realDownloader.fetchVideoInfo();
 }
 
 function startDownload(quality) {
-    proTube.startDownload(quality);
+    realDownloader.startDownload(quality);
 }
 
-// Add some interactive effects
-document.addEventListener('DOMContentLoaded', function() {
-    // Add hover effects to quality cards
-    const qualityCards = document.querySelectorAll('.quality-card');
-    qualityCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-5px)';
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
+function quickDownload() {
+    realDownloader.quickDownload();
+}
 
-    console.log('🎉 ProTube Downloader Ready!');
-});
+function downloadAudio() {
+    realDownloader.downloadAudio();
+}
